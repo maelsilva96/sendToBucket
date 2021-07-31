@@ -16,10 +16,10 @@ try {
     const result = async () => {
         return await exec.exec('./vswhere.exe -latest -requires Microsoft.Component.MSBuild -find MSBuild\\**\\Bin\\MSBuild.exe');
     }
-    let files = fs.readdirSync('C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\**');
+    /*let files = fs.readdirSync('C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\**');
     files.forEach(path => {
         console.log(path);
-    });
+    });*/
     // Get the JSON webhook payload for the event that triggered the workflow
     const payload = JSON.stringify(github.context.payload, undefined, 2)
     console.log(`The event payload: ${payload}`);
