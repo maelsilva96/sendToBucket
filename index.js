@@ -2,7 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const https = require('https');
 const fs = require('fs');
-const shell = require('shelljs');
+const exec = require('@actions/exec');
 
 try {
     const urlFile = core.getInput('urlFile');
@@ -11,7 +11,8 @@ try {
     const request = https.get(urlFile, function(response) {
       response.pipe(file);
     });
-    shell.exec('vswhere.exe -latest -requires Microsoft.Component.MSBuild -find MSBuild\\**\\Bin\\MSBuild.exe');
+    core.
+    exec.exec('vswhere.exe -latest -requires Microsoft.Component.MSBuild -find MSBuild\\**\\Bin\\MSBuild.exe');
     // Get the JSON webhook payload for the event that triggered the workflow
     const payload = JSON.stringify(github.context.payload, undefined, 2)
     console.log(`The event payload: ${payload}`);
