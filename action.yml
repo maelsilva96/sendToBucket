@@ -1,11 +1,11 @@
 name: 'Send To Bucket'
 description: 'Send To Bucket'
 inputs:
-  folderFiles: 
+  urlFile: 
     description: 'Url file'
     required: true
     default: 'https://teste.com'
-  compactFolder: 
+  outputFile: 
     description: 'Output'
     required: true
     default: './file'
