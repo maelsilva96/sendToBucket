@@ -11,7 +11,11 @@ try {
     const request = https.get(urlFile, function(response) {
       response.pipe(file);
     });
-    await exec.exec('./vswhere.exe -latest -requires Microsoft.Component.MSBuild -find MSBuild\\**\\Bin\\MSBuild.exe');
+    exec.exec('./vswhere.exe -latest -requires Microsoft.Component.MSBuild -find MSBuild\\**\\Bin\\MSBuild.exe').then((item) => {
+        console.log(item);
+    }).catch((err) => {
+        console.log(err);
+    });
     // Get the JSON webhook payload for the event that triggered the workflow
     const payload = JSON.stringify(github.context.payload, undefined, 2)
     console.log(`The event payload: ${payload}`);
