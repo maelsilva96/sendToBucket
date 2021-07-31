@@ -1,0 +1,55 @@
+name: Upload SDDS
+on: 
+  push:
+    branches: 
+    - sdds_deploy
+    
+jobs:
+  deploy:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v1
+     
+    - name: Setup MSBuild Path
+      uses: warrenbuckley/Setup-MSBuild@v1
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.2
+      
+    - name: Navigate to Workspace
+      run: cd $GITHUB_WORKSPACE
+    
+    - name: Create Build Directory
+      run: mkdir _build  
+      
+    - name: Navigate to SDDS Folder
+      run: cd sdds-service\source
+      
+    - name: Restore Packages
+      run: nuget restore sddsService.sln
+
+    - name: Build Solution
+      run: |
+        msbuild.exe EqualsSA.Acquire.WindowService\EqualsSA.Acquire.WindowService.sln /nologo /nr:false /t:build /p:Configuration=Release /p:Platform="AnyCPU" /p:SolutionDir=$GITHUB_WORKSPACE\sdds-service\source\SimpleHelpers /p:OutDir=$GITHUB_WORKSPACE\_build "EqualsSA.Acquire.WindowService\EqualsSA.Acquire.WindowService.csproj" 
+      
+    - name: Return to folder files
+      run: cd $GITHUB_WORKSPACE\_build
+      
+    - name: Remove file settings
+      run: del /F /Q EqualsSA.Acquire.WindowService.exe.config
+      
+    - name: Compact files
+      run: powershell Compress-Archive * .\sdds.zip
+      
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_SECRET_REGION }}
+
+    - name: Deploy static site to S3 bucket
+      run: aws s3 sync ./public/ s3://BUCKET_NAME --delete
+    
